@@ -6,7 +6,7 @@ export default function Header() {
       <h1>Multi Data Dashboard</h1>
       <p><strong>Name:</strong> Yumin Jang</p>
       <p><strong>Z Number:</strong> Z23655899</p>
-      <p>Welcome to the data management interface</p>
+      <p>Welcome to the Multi Data Dashboard interface!</p>
     </header>
   );
 }
