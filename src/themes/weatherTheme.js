@@ -1,22 +1,18 @@
-const API_KEY = import.meta.env.VITE_WEATHER_KEY
-
 export const weatherTheme = {
-  fetchUrl: `https://api.weatherbit.io/v2.0/current?city=Miami&key=${API_KEY}`,
+  fetchUrl: `https://api.weatherbit.io/v2.0/current?city=New%20York&key=${import.meta.env.VITE_WEATHERBIT_API_KEY}`,
 
-  mapData: (data) =>
-    data.data.map((item, i) => ({
-      id: i,
-      name: item.city_name,
-      field1: item.temp,
-      field2: item.weather.description
-    })),
-
-  stats: (data) => ({
-    total: data.length,
-    avgTemp:
-      data.reduce((sum, d) => sum + d.field1, 0) / data.length,
-    conditions: new Set(data.map((d) => d.field2)).size
+  mapData: (data) => ({
+    city: data.data[0].city_name,
+    country: data.data[0].country_code,
+    temp: data.data[0].temp,
+    description: data.data[0].weather.description
   }),
 
-  filter: (data) => data
-}
+  stats: (data) => ({
+    temp: data.temp,
+    city: data.city
+  }),
+
+  filter: (data, search) =>
+    data.city.toLowerCase().includes(search.toLowerCase())
+};
