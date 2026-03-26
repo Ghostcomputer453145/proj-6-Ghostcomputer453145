@@ -1,10 +1,10 @@
-function Card({ item }) {
+import React from "react";
+
+export default function Card({ title, value }) {
   return (
-    <div style={{ border: "1px solid gray", margin: "10px" }}>
-      <p>{item.name || item.title || "No Name"}</p>
-      <p>{item.city || item.author_name || "No Info"}</p>
+    <div className="card">
+      <h3>{title}</h3>
+      <p>{value}</p>
     </div>
   );
 }
-
-export default Card;

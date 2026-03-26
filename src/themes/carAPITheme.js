@@ -6,15 +6,16 @@ export const carAPITheme = {
       "X-RapidAPI-Host": "car-api2.p.rapidapi.com"
     }
   },
-  mapData: (data) => [{
+  mapData: (data) => {
+    if (!data) return [];
+    return [{
     id: 1,
-    name: data.make + " " + data.model,
-    field1: data.year,
-    field2: data.color
-  }],
-  stats: (data) => ({
-    total: data.length
-  }),
+    name: data.make + " " + data.model  || "N/A",
+    field1: data.year || "N/A",
+    field2: data.color || "N/A"
+  }];
+  },
+  stats: (data) => ({total: data.length || 0 }),
   filter: (data, search) =>
     data.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
 };

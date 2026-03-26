@@ -6,12 +6,15 @@ export const binIPCheckerTheme = {
       "X-RapidAPI-Host": "bin-ip-checker.p.rapidapi.com"
     }
   },
-  mapData: (data) => [{
-    id:1,
-    name:data.bin,
-    field1:data.brand,
-    field2:data.type
-  }],
-  stats:(data)=>({ total:data.length }),
+  mapData: (data) => {
+    if (!data) return [];
+    return [{
+        id: 1,
+        name: data.bin || "N/A",
+        field1: data.brand || "N/A",
+        field2: data.type || "N/A"
+    }];
+  },
+  stats: (data) => ({ total: data?.length || 0 }),
   filter:(data,search)=>data.filter((i)=>i.name.includes(search))
 };

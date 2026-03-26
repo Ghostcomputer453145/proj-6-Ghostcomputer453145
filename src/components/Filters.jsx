@@ -1,12 +1,13 @@
-function Filters({ data, setFiltered }) {
-  const handleFilter = () => {
-    const filtered = data.filter((item) =>
-      JSON.stringify(item).length > 100
-    );
-    setFiltered(filtered);
-  };
+import React from "react";
 
-  return <button onClick={handleFilter}>Apply Filter</button>;
+export default function Filters({ options, onSelect }) {
+  return (
+    <div className="filters">
+      {options.map((opt) => (
+        <button key={opt} onClick={() => onSelect(opt)}>
+          {opt}
+        </button>
+      ))}
+    </div>
+  );
 }
-
-export default Filters;

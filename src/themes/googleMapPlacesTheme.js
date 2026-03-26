@@ -6,14 +6,15 @@ export const googleMapPlacesTheme = {
       "X-RapidAPI-Host": "google-map-places.p.rapidapi.com"
     }
   },
-  mapData: (data) => [{
-    id: 1,
-    name: "Street View",
-    field1: data.url || "N/A",
-    field2: data.location || "N/A"
-  }],
-  stats: (data) => ({
-    total: data.length
-  }),
+  mapData: (data) => {
+    if (!data) return [];
+    return [{
+      id: 1,
+      name: "Street View" || "N/A",
+      field1: data.url || "N/A",
+      field2: data.location || "N/A"
+    }];
+  },
+  stats: (data) => ({total: data.length || 0}),
   filter: (data, search) => data
 };

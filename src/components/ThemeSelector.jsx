@@ -1,15 +1,17 @@
-const themes = ["Brewery", "Books", "Events", "Recipes", "Weather", "Marvel", "Museum", "Gaming", "Rewards", "Food"]
+import React from "react";
+import { themes } from "../themes";
 
-const ThemeSelector = ({ setTheme }) => {
+export default function ThemeSelector({ theme, setTheme }) {
   return (
-    <div>
-      {themes.map((theme) => (
-        <button key={theme} onClick={() => setTheme(theme)}>
-          {theme}
-        </button>
-      ))}
+    <div className="theme-selector">
+      <label>Theme:</label>
+      <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+        {Object.keys(themes).map((key) => (
+          <option key={key} value={key}>
+            {key}
+          </option>
+        ))}
+      </select>
     </div>
-  )
+  );
 }
-
-export default ThemeSelector
