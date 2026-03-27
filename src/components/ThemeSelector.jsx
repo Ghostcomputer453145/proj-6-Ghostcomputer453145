@@ -3,7 +3,7 @@ import { themes } from "../themes";
 
 export default function ThemeSelector({ theme, setTheme }) {
   return (
-    <div className="theme-selector">
+    <div className="theme-selector" style={{ textAlign: "center" }}>
       <label>Theme:</label>
       <select value={theme} onChange={(e) => setTheme(e.target.value)}>
         <option value="">Pick a theme to start</option>

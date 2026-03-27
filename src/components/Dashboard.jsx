@@ -45,8 +45,7 @@ const themeBackgrounds = {
   weatherTheme: weatherBg,
 };
 
-export default function Dashboard() {
-  const [selectedTheme, setSelectedTheme] = useState("");
+export default function Dashboard({ selectedTheme, setSelectedTheme }) {
   const [data, setData] = useState([]);
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
