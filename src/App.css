@@ -128,7 +128,7 @@ input[type="text"] {
 }
 
 h1, h2, h3, p, label, button, input, select {
-  color: white !important;
+  color: gold !important;
   font-weight: bold;
   text-shadow:
     -2px -2px 0 black,
