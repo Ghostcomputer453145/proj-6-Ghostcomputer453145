@@ -105,7 +105,6 @@ export default function Dashboard() {
 
   return (
     <main>
-      <h2 style={{ marginBottom: "16px", color: "#fff" }}>Multi Data Dashboard</h2>
       <ThemeSelector theme={selectedTheme} setTheme={setSelectedTheme} />
 
       {selectedTheme && (
