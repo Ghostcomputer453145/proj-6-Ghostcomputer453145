@@ -68,6 +68,8 @@ export default function Dashboard({ selectedTheme }) {
       totalBreweries: "Total Breweries",
       uniqueCities: "Unique Cities",
       uniqueTypes: "Unique Types",
+      minYear: "Earliest Year",
+      maxYear: "Latest Year",
     };
     return map[key] || key;
   };
