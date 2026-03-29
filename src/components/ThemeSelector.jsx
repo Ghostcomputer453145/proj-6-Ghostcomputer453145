@@ -9,7 +9,7 @@ export default function ThemeSelector({ theme, setTheme }) {
         <option value="">Pick a theme to start</option>
         {Object.keys(themes).map((key) => (
           <option key={key} value={key}>
-            {key}
+            {key.replace("Theme", "")}
           </option>
         ))}
       </select>

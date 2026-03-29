@@ -4,45 +4,13 @@ import SearchBar from "./SearchBar";
 import Filters from "./Filters";
 import ThemeSelector from "./ThemeSelector";
 import { themes } from "../themes";
-
-import binIPCheckerBg from "../images/binIPCheckerTheme.png";
 import booksBg from "../images/booksTheme.png";
 import breweryBg from "../images/breweryTheme.png";
-import carAPIBg from "../images/carAPITheme.png";
-import exerciseDBBg from "../images/exerciseDBTheme.png";
-import googleMapPlacesBg from "../images/googleMapPlacesTheme.png";
-import linkedinScraperBg from "../images/linkedinScraperTheme.png";
-import mobilePhoneSpecsBg from "../images/mobilePhoneSpecsTheme.png";
-import moviesTVShowsBg from "../images/moviesTVShowsTheme.png";
-import realTimeLensBg from "../images/realTimeLensTheme.png";
-import recipesBg from "../images/recipesTheme.png";
-import rocketLeagueBg from "../images/rocketLeagueTheme.png";
-import seekingAlphaBg from "../images/seekingAlphaTheme.png";
-import spotifyDownloaderBg from "../images/spotifyDownloaderTheme.png";
-import translateAIBg from "../images/translateAITheme.png";
-import usaLotteryBg from "../images/usaLotteryTheme.png";
-import weatherBg from "../images/weatherTheme.png";
-
-import { fetchThemeData } from "../services/api";
+import { fetchThemeData, filterThemeData } from "../services/api";
 
 const themeBackgrounds = {
-  binIPCheckerTheme: binIPCheckerBg,
   booksTheme: booksBg,
   breweryTheme: breweryBg,
-  carAPITheme: carAPIBg,
-  exerciseDBTheme: exerciseDBBg,
-  googleMapPlacesTheme: googleMapPlacesBg,
-  linkedinScraperTheme: linkedinScraperBg,
-  mobilePhoneSpecsTheme: mobilePhoneSpecsBg,
-  moviesTVShowsTheme: moviesTVShowsBg,
-  realTimeLensTheme: realTimeLensBg,
-  recipesTheme: recipesBg,
-  rocketLeagueTheme: rocketLeagueBg,
-  seekingAlphaTheme: seekingAlphaBg,
-  spotifyDownloaderTheme: spotifyDownloaderBg,
-  translateAITheme: translateAIBg,
-  usaLotteryTheme: usaLotteryBg,
-  weatherTheme: weatherBg,
 };
 
 export default function Dashboard({ selectedTheme, setSelectedTheme }) {
@@ -74,7 +42,6 @@ export default function Dashboard({ selectedTheme, setSelectedTheme }) {
     loadData();
   }, [selectedTheme]);
 
-
   useEffect(() => {
     if (selectedTheme) {
       const bgUrl = themeBackgrounds[selectedTheme];
@@ -93,12 +60,9 @@ export default function Dashboard({ selectedTheme, setSelectedTheme }) {
     };
   }, [selectedTheme]);
 
-  const filteredData = data.filter((item) => {
-    const name = item.name || "";
-    const matchesSearch = name.toLowerCase().includes(search.toLowerCase());
-    const matchesFilter = filter === "all" || item.field2 === filter;
-    return matchesSearch && matchesFilter;
-  });
+  const filteredData = selectedTheme
+    ? filterThemeData(themes[selectedTheme], data, search, filter)
+    : [];
 
   const filterOptions = ["all", ...new Set(data.map((d) => d.field2).filter(Boolean))];
 

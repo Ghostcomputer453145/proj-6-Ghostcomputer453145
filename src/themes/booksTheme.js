@@ -4,8 +4,8 @@ export const booksTheme = {
     data.docs.slice(0, 30).map((item, i) => ({
       id: i,
       name: item.title,
-      field1: item.author_name?.[0],
-      field2: item.first_publish_year
+      field1: item.author_name?.[0] || "N/A",
+      field2: item.first_publish_year || "N/A"
     })),
   stats: (data) => ({
     total: data.length,
@@ -15,4 +15,4 @@ export const booksTheme = {
   }),
   filter: (data, search) =>
     data.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
-}
+};

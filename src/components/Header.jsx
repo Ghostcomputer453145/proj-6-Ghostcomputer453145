@@ -1,21 +1,9 @@
-import React from 'react';
+import React from "react";
 
 export default function Header({ theme }) {
-
   const formatThemeWords = (themeName) => {
     if (!themeName) return "";
-
-    const cleaned = themeName.replace("Theme", "");
-
-    const words = cleaned.match(/([A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+)/g) || [];
-
-    return words
-      .map(word => {
-        const upperWord = word.toUpperCase();
-        if (["API","DB","TV","IP"].includes(upperWord)) return upperWord;
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      })
-      .join(" ");
+    return themeName === "booksTheme" ? "Books" : "Breweries";
   };
 
   const formatTitle = (themeName) => {

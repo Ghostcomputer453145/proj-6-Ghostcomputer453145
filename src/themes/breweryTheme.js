@@ -12,10 +12,10 @@ export const breweryTheme = {
     cities: new Set(data.map((d) => d.field1)).size,
     types: new Set(data.map((d) => d.field2)).size
   }),
-  filter: (data, search, category) =>
+  filter: (data, search, category = "all") =>
     data.filter(
       (item) =>
         item.name.toLowerCase().includes(search.toLowerCase()) &&
         (category === "all" || item.field2 === category)
     )
-}
+};
