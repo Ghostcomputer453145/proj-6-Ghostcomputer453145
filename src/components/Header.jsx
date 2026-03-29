@@ -1,27 +1,13 @@
 import React from "react";
 
 export default function Header({ theme }) {
-  const formatThemeWords = (themeName) => {
-    if (!themeName) return "";
-    return themeName === "booksTheme" ? "Books" : "Breweries";
-  };
-
-  const formatTitle = (themeName) => {
-    if (!themeName) return "Multi Data Dashboard";
-    return `${formatThemeWords(themeName)} Data Dashboard`;
-  };
-
-  const formatWelcome = (themeName) => {
-    if (!themeName) return "Welcome to the data management interface";
-    return `Welcome to the data management interface of ${formatThemeWords(themeName)}`;
-  };
-
+  const formatTheme = theme => theme === "booksTheme" ? "Books" : theme === "breweryTheme" ? "Breweries" : "";
   return (
     <header className="header">
-      <h1>{formatTitle(theme)}</h1>
+      <h1>{formatTheme(theme) ? `${formatTheme(theme)} Dashboard` : "Multi Data Dashboard"}</h1>
       <p><strong>Name:</strong> Yumin Jang</p>
       <p><strong>Z Number:</strong> Z23655899</p>
-      <p>{formatWelcome(theme)}</p>
+      <p>{formatTheme(theme) ? `Welcome to ${formatTheme(theme)} dashboard` : "Welcome to the data management interface"}</p>
     </header>
   );
 }

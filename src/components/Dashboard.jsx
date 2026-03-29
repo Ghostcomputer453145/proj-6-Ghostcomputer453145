@@ -1,98 +1,147 @@
 import React, { useState, useEffect } from "react";
-import Card from "./Card";
-import SearchBar from "./SearchBar";
-import Filters from "./Filters";
-import ThemeSelector from "./ThemeSelector";
 import { themes } from "../themes";
+import { fetchThemeData, filterThemeData } from "../services/api";
+import Card from "./Card";
 import booksBg from "../images/booksTheme.png";
 import breweryBg from "../images/breweryTheme.png";
-import { fetchThemeData, filterThemeData } from "../services/api";
 
 const themeBackgrounds = {
   booksTheme: booksBg,
   breweryTheme: breweryBg,
 };
 
-export default function Dashboard({ selectedTheme, setSelectedTheme }) {
+export default function Dashboard({ selectedTheme }) {
   const [data, setData] = useState([]);
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [yearRange, setYearRange] = useState([0, Infinity]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!selectedTheme) return;
-
-    const loadData = async () => {
-      setLoading(true);
+    setLoading(true);
+    const load = async () => {
       const themeObj = themes[selectedTheme];
-      try {
-        const { data, stats } = await fetchThemeData(themeObj);
-        setData(data);
-        setStats(stats);
-      } catch (error) {
-        setData([]);
-        setStats({});
-      }
-      setSearch("");
+      const { data: fetched, stats: s } = await fetchThemeData(themeObj);
+      setData(fetched);
+      setStats(s);
       setFilter("all");
+      setSearch("");
+      if (selectedTheme === "booksTheme") {
+        setYearRange([s.minYear, s.maxYear]);
+      } else {
+        setYearRange([0, Infinity]);
+      }
       setLoading(false);
     };
-
-    loadData();
+    load();
   }, [selectedTheme]);
 
   useEffect(() => {
-    if (selectedTheme) {
-      const bgUrl = themeBackgrounds[selectedTheme];
-      document.body.style.backgroundImage = `url(${bgUrl})`;
-      document.body.style.backgroundSize = "cover";
-      document.body.style.backgroundPosition = "center";
-      document.body.style.backgroundRepeat = "no-repeat";
-      document.body.style.transition = "all 0.5s ease";
-    } else {
-      document.body.style.backgroundImage = "";
-      document.body.style.backgroundColor = "#111";
+    if (!selectedTheme) {
+      document.body.style.background = "#111";
+      return;
     }
-
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
+    const bg = themeBackgrounds[selectedTheme];
+    document.body.style.backgroundImage = `url(${bg})`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundPosition = "center";
   }, [selectedTheme]);
 
   const filteredData = selectedTheme
-    ? filterThemeData(themes[selectedTheme], data, search, filter)
+    ? filterThemeData(themes[selectedTheme], data, search, filter, yearRange)
     : [];
 
-  const filterOptions = ["all", ...new Set(data.map((d) => d.field2).filter(Boolean))];
+  const filterOptions = selectedTheme && data.length
+  ? selectedTheme === "booksTheme"
+    ? [...new Set(data.map(d => d.author))]
+    : [...new Set(data.map(d => d.type))]
+    : [];
+
+  const formatStatLabel = (key) => {
+    const map = {
+      totalBooks: "Total Books",
+      uniqueAuthors: "Unique Authors",
+      avgYear: "Average Year",
+      totalBreweries: "Total Breweries",
+      uniqueCities: "Unique Cities",
+      uniqueTypes: "Unique Types",
+    };
+    return map[key] || key;
+  };
 
   return (
-    <main>
-      <ThemeSelector theme={selectedTheme} setTheme={setSelectedTheme} />
-
+    <div className="dashboard">
       {selectedTheme && (
-        <>
-          <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
-          <Filters options={filterOptions} onSelect={setFilter} />
-        </>
+        <div className="controls">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <option value="all">All</option>
+            {filterOptions.map((opt) => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+
+          {selectedTheme === "booksTheme" && stats.minYear && stats.maxYear && (
+            <div className="slider-container">
+              <label>
+                Year: {yearRange[0]} - {yearRange[1]}
+              </label>
+              <input
+                type="range"
+                min={stats.minYear}
+                max={stats.maxYear}
+                value={yearRange[0]}
+                onChange={(e) => setYearRange([+e.target.value, yearRange[1]])}
+              />
+              <input
+                type="range"
+                min={stats.minYear}
+                max={stats.maxYear}
+                value={yearRange[1]}
+                onChange={(e) => setYearRange([yearRange[0], +e.target.value])}
+              />
+            </div>
+          )}
+        </div>
       )}
 
-      {loading ? (
-        <p style={{ textAlign: "center", fontSize: "20px", color: "#fff" }}>Loading data...</p>
-      ) : (
-        selectedTheme && (
-          <div className="cards">
-            {stats && Object.keys(stats).length > 0 &&
-              Object.entries(stats).map(([key, value]) => (
-                <Card key={key} title={key} value={value} />
-              ))
-            }
-            {filteredData.map((item) => (
-              <Card key={item.id} title={item.name} value={`${item.field1} | ${item.field2}`} />
-            ))}
+      <div className="stats">
+        {Object.entries(stats).map(([k, v]) => (
+          <div className="stat-card" key={k}>
+            <h2>{v}</h2>
+            <p>{formatStatLabel(k)}</p>
           </div>
-        )
-      )}
-    </main>
+        ))}
+      </div>
+
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>{selectedTheme === "booksTheme" ? "Author" : "City / State"}</th>
+              <th>{selectedTheme === "booksTheme" ? "Year" : "Type"}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.author || `${item.city}, ${item.state}`}</td>
+                <td>{item.year || item.type}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

@@ -1,7 +1,4 @@
-import { booksTheme } from './booksTheme.js';
-import { breweryTheme } from './breweryTheme.js';
+import { booksTheme } from "./booksTheme";
+import { breweryTheme } from "./breweryTheme";
 
-export const themes = {
-  booksTheme,
-  breweryTheme,
-};
+export const themes = { booksTheme, breweryTheme };

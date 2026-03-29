@@ -7,7 +7,7 @@ export default function SearchBar({ value, onChange }) {
       className="search-bar"
       placeholder="Search..."
       value={value}
-      onChange={onChange}
+      onChange={(e) => onChange(e.target.value)}
     />
   );
 }

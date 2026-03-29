@@ -1,13 +1,12 @@
 import React from "react";
 
-export default function Filters({ options, onSelect }) {
+export default function Filters({ options, selected, onSelect }) {
   return (
-    <div className="filters">
+    <select value={selected} onChange={(e) => onSelect(e.target.value)}>
+      <option value="all">All</option>
       {options.map((opt) => (
-        <button key={opt} onClick={() => onSelect(opt)}>
-          {opt}
-        </button>
+        <option key={opt} value={opt}>{opt}</option>
       ))}
-    </div>
+    </select>
   );
 }
