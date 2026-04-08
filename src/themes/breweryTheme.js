@@ -1,5 +1,5 @@
 export const breweryTheme = {
-  fetchUrl: "https://api.openbrewerydb.org/v1/breweries?per_page=100",
+  fetchUrl: "https://api.openbrewerydb.org/v1/breweries?per_page=200",
   mapData: (data) =>
     data.map((item) => ({
       id: item.id,

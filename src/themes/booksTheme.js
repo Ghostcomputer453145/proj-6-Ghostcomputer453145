@@ -1,6 +1,6 @@
 export const booksTheme = {
   fetchUrl:
-    "https://openlibrary.org/search.json?title=the&limit=50&fields=title,author_name,first_publish_year,key,cover_edition_key",
+    "https://openlibrary.org/search.json?title=the&limit=200&fields=title,author_name,first_publish_year,key,cover_edition_key",
 
   mapData: (data) => {
     if (!data.docs || !Array.isArray(data.docs)) return [];
