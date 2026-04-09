@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { themes } from "../themes";
 import { fetchThemeData, filterThemeData } from "../services/api";
-import Card from "./Card";
+import { useNavigate } from "react-router-dom";
+import Charts from "./Charts";
 import booksBg from "../images/booksTheme.png";
 import breweryBg from "../images/breweryTheme.png";
 
@@ -16,11 +17,12 @@ export default function Dashboard({ selectedTheme }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [yearRange, setYearRange] = useState([0, Infinity]);
-  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!selectedTheme) return;
-    setLoading(true);
+
     const load = async () => {
       const themeObj = themes[selectedTheme];
       const { data: fetched, stats: s } = await fetchThemeData(themeObj);
@@ -28,13 +30,14 @@ export default function Dashboard({ selectedTheme }) {
       setStats(s);
       setFilter("all");
       setSearch("");
+
       if (selectedTheme === "booksTheme") {
         setYearRange([s.minYear, s.maxYear]);
       } else {
         setYearRange([0, Infinity]);
       }
-      setLoading(false);
     };
+
     load();
   }, [selectedTheme]);
 
@@ -54,11 +57,12 @@ export default function Dashboard({ selectedTheme }) {
     ? filterThemeData(themes[selectedTheme], data, search, filter, yearRange)
     : [];
 
-  const filterOptions = selectedTheme && data.length
-  ? selectedTheme === "booksTheme"
-    ? [...new Set(data.map(d => d.author))]
-    : [...new Set(data.map(d => d.type))]
-    : [];
+  const filterOptions =
+    selectedTheme && data.length
+      ? selectedTheme === "booksTheme"
+        ? [...new Set(data.map((d) => d.author))]
+        : [...new Set(data.map((d) => d.type))]
+      : [];
 
   const formatStatLabel = (key) => {
     const map = {
@@ -74,16 +78,22 @@ export default function Dashboard({ selectedTheme }) {
     return map[key] || key;
   };
 
+  const goToDetail = (item) => {
+    localStorage.setItem("selectedItem", JSON.stringify(item));
+    navigate(`/details/${item.id}`);
+  };
+
   return (
     <div className="dashboard">
+
       {selectedTheme && (
         <div className="controls">
           <input
-            type="text"
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+
           <select value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="all">All</option>
             {filterOptions.map((opt) => (
@@ -96,19 +106,25 @@ export default function Dashboard({ selectedTheme }) {
               <label>
                 Year: {yearRange[0]} - {yearRange[1]}
               </label>
+
               <input
                 type="range"
                 min={stats.minYear}
                 max={stats.maxYear}
                 value={yearRange[0]}
-                onChange={(e) => setYearRange([+e.target.value, yearRange[1]])}
+                onChange={(e) =>
+                  setYearRange([+e.target.value, yearRange[1]])
+                }
               />
+
               <input
                 type="range"
                 min={stats.minYear}
                 max={stats.maxYear}
                 value={yearRange[1]}
-                onChange={(e) => setYearRange([yearRange[0], +e.target.value])}
+                onChange={(e) =>
+                  setYearRange([yearRange[0], +e.target.value])
+                }
               />
             </div>
           )}
@@ -124,25 +140,49 @@ export default function Dashboard({ selectedTheme }) {
         ))}
       </div>
 
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>{selectedTheme === "booksTheme" ? "Author" : "City / State"}</th>
-              <th>{selectedTheme === "booksTheme" ? "Year" : "Type"}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((item) => (
-              <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.author || `${item.city}, ${item.state}`}</td>
-                <td>{item.year || item.type}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div style={{ display: "flex", gap: "20px" }}>
+
+        <div style={{ flex: 2 }}>
+          <div className="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>
+                    {selectedTheme === "booksTheme"
+                      ? "Author"
+                      : "City / State"}
+                  </th>
+                  <th>
+                    {selectedTheme === "booksTheme"
+                      ? "Year"
+                      : "Type"}
+                  </th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {filteredData.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.name}</td>
+                    <td>{item.author || `${item.city}, ${item.state}`}</td>
+                    <td>{item.year || item.type}</td>
+                    <td>
+                      <button onClick={() => goToDetail(item)}>🔗</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <Charts data={filteredData} theme={selectedTheme} />
+        </div>
+
       </div>
     </div>
   );

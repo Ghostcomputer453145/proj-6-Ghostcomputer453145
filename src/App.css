@@ -20,8 +20,8 @@ body {
   flex: 1;
   padding: 20px;
   box-sizing: border-box;
-  margin-left: 220px;
-  max-width: calc(100% - 220px);
+  margin-left: 180px;
+  max-width: calc(100% - 180px);
 }
 
 .dashboard {

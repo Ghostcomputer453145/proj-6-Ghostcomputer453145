@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
 import ThemeSelector from "./components/ThemeSelector";
@@ -7,6 +8,19 @@ import "./App.css";
 
 export default function App() {
   const [selectedTheme, setSelectedTheme] = useState("");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.theme) {
+      setSelectedTheme(location.state.theme);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (selectedTheme) {
+      localStorage.setItem("lastTheme", selectedTheme);
+    }
+  }, [selectedTheme]);
 
   return (
     <div className="app-container">
