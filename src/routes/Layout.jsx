@@ -10,9 +10,7 @@ export default function Layout() {
   return (
     <>
       <nav style={{ position: "fixed", top: 10, right: 20 }}>
-        <button onClick={goHome} style={{ color: "gold" }}>
-          Home
-        </button>
+        <button onClick={goHome}>Back to Dashboard</button>
       </nav>
       <Outlet />
     </>

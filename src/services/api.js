@@ -2,7 +2,7 @@ export const fetchThemeData = async (theme) => {
   try {
     const res = await fetch(theme.fetchUrl);
     const data = await res.json();
-    const mapped = theme.mapData(data);
+    const mapped = await theme.mapData(data);
     const stats = theme.stats(mapped);
     return { data: mapped, stats };
   } catch (err) {

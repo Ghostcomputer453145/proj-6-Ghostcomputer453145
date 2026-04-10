@@ -140,9 +140,13 @@ export default function Dashboard({ selectedTheme }) {
         ))}
       </div>
 
-      <div style={{ display: "flex", gap: "20px" }}>
+      <div style={{
+        display: "flex",
+        gap: "20px",
+        flexWrap: "wrap"
+      }}>
 
-        <div style={{ flex: 2 }}>
+        <div style={{ flex: "1 1 1100px", minWidth: "0" }}>
           <div className="table-container">
             <table>
               <thead>
@@ -179,7 +183,7 @@ export default function Dashboard({ selectedTheme }) {
           </div>
         </div>
 
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: "1 1 800px" }}>
           <Charts data={filteredData} theme={selectedTheme} />
         </div>
 

@@ -1,10 +1,24 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function NotFound() {
+  const navigate = useNavigate();
+  const goBackToDashboard = () => {
+    const lastTheme = localStorage.getItem("lastTheme");
+    navigate("/", { state: { theme: lastTheme } });
+  };
+
   return (
-    <div style={{ marginLeft: "220px", textAlign: "center", marginTop: "100px" }}>
+    <div
+      style={{
+        marginLeft: "180px",
+        textAlign: "center",
+        marginTop: "100px",
+      }}
+    >
       <h2>There's nothing here!</h2>
-      <Link to="/">Back to Home</Link>
+      <button onClick={goBackToDashboard}>
+        ⬅ Back
+      </button>
     </div>
   );
 }

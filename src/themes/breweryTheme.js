@@ -8,7 +8,6 @@ export const breweryTheme = {
       city: item.city,
       state: item.state_province,
       type: item.brewery_type,
-      description: `${item.name} is a ${item.brewery_type} brewery located in ${item.city}, ${item.state_province}.`
     })),
 
   stats: (data) => ({

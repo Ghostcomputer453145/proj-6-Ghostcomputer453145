@@ -2,7 +2,7 @@ export const booksTheme = {
   fetchUrl:
     "https://openlibrary.org/search.json?title=the&limit=200&fields=title,author_name,first_publish_year,key",
 
-  mapData: (data) => {
+  mapData: async (data) => {
     if (!data.docs) return [];
 
     const seen = new Set();
@@ -10,17 +10,28 @@ export const booksTheme = {
 
     for (const item of data.docs) {
       if (!item.title || seen.has(item.title)) continue;
+      if (!item.key) continue;
+
       seen.add(item.title);
 
-      mapped.push({
-        id: item.key,
-        name: item.title,
-        author: item.author_name?.[0] || "Unknown",
-        year: item.first_publish_year || null,
-        key: item.key
-      });
+      try {
+        const res = await fetch(`https://openlibrary.org${item.key}.json`);
+        const detail = await res.json();
 
-      if (mapped.length >= 30) break;
+        if (!detail.description) continue;
+
+        mapped.push({
+          id: item.key,
+          name: item.title,
+          author: item.author_name?.[0] || "Unknown",
+          year: item.first_publish_year || null,
+          key: item.key
+        });
+
+        if (mapped.length >= 30) break;
+      } catch {
+        continue;
+      }
     }
 
     return mapped;
