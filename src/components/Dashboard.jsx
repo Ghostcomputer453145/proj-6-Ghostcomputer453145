@@ -17,7 +17,7 @@ export default function Dashboard({ selectedTheme }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [yearRange, setYearRange] = useState([0, Infinity]);
-
+  const [showCharts, setShowCharts] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export default function Dashboard({ selectedTheme }) {
 
   const goToDetail = (item) => {
     localStorage.setItem("selectedItem", JSON.stringify(item));
-    navigate(`/details/${encodeURIComponent(item.id)}`);
+    navigate(`/details/${btoa(item.id)}`);
   };
 
   return (
@@ -98,6 +98,7 @@ export default function Dashboard({ selectedTheme }) {
       ) : (
         <>
           <div className="controls">
+
             <input
               placeholder="Search..."
               value={search}
@@ -110,6 +111,10 @@ export default function Dashboard({ selectedTheme }) {
                 <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
+
+            <button onClick={() => setShowCharts(prev => !prev)}>
+              {showCharts ? "Hide Charts" : "Show Charts"}
+            </button>
 
             {selectedTheme === "booksTheme" && stats.minYear && stats.maxYear && (
               <div className="slider-container">
@@ -177,7 +182,7 @@ export default function Dashboard({ selectedTheme }) {
 
                   <tbody>
                     {filteredData.map((item) => (
-                      <tr key={item.id}>
+                      <tr key={item.id} onClick={() => goToDetail(item)} style={{ cursor: "pointer" }}>
                         <td>{item.name}</td>
                         <td>{item.author || `${item.city}, ${item.state}`}</td>
                         <td>{item.year || item.type}</td>
@@ -192,9 +197,11 @@ export default function Dashboard({ selectedTheme }) {
               </div>
             </div>
 
-            <div style={{ flex: "1 1 500px" }}>
-              <Charts data={filteredData} theme={selectedTheme} />
-            </div>
+            {showCharts && (
+              <div style={{ flex: "1 1 500px" }}>
+                <Charts data={filteredData} theme={selectedTheme} />
+              </div>
+            )}
 
           </div>
         </>

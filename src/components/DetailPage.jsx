@@ -3,15 +3,16 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export default function DetailPage() {
   const { id } = useParams();
+  const decodedId = id ? atob(id) : null;
   const [item, setItem] = useState(null);
   const [description, setDescription] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!id) return;
+    if (!decodedId) return;
 
     const storedList = JSON.parse(localStorage.getItem("cachedList") || "[]");
-    const found = storedList.find((x) => x.id === id);
+    const found = storedList.find((x) => x.id === decodedId);
 
     if (!found) return;
 
@@ -48,7 +49,11 @@ export default function DetailPage() {
           if (data.phone) parts.push(`Phone: ${data.phone}`);
           if (data.website_url) parts.push(`Website: ${data.website_url}`);
 
-          setDescription(parts.length ? parts.join("\n") : "No additional brewery details available.");
+          setDescription(
+            parts.length
+              ? parts.join("\n")
+              : "No additional brewery details available."
+          );
         })
         .catch(() => setDescription("No description available."));
     }
