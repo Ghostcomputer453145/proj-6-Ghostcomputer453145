@@ -27,6 +27,7 @@ export default function Dashboard({ selectedTheme }) {
       const themeObj = themes[selectedTheme];
       const { data: fetched, stats: s } = await fetchThemeData(themeObj);
       setData(fetched);
+      localStorage.setItem("cachedList", JSON.stringify(fetched));
       setStats(s);
       setFilter("all");
       setSearch("");
@@ -80,7 +81,7 @@ export default function Dashboard({ selectedTheme }) {
 
   const goToDetail = (item) => {
     localStorage.setItem("selectedItem", JSON.stringify(item));
-    navigate(`/details/${item.id}`);
+    navigate(`/details/${encodeURIComponent(item.id)}`);
   };
 
   return (

@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function DetailPage() {
+  const { id } = useParams();
   const [item, setItem] = useState(null);
   const [description, setDescription] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem("selectedItem");
-    if (!stored) return;
-    const parsed = JSON.parse(stored);
-    setItem(parsed);
+    if (!id) return;
 
-    if (parsed.key) {
-      fetch(`https://openlibrary.org${parsed.key}.json`)
-        .then(res => res.json())
-        .then(data => {
+    const storedList = JSON.parse(localStorage.getItem("cachedList") || "[]");
+    const found = storedList.find((x) => x.id === id);
+
+    if (!found) return;
+
+    setItem(found);
+
+    if (found.key) {
+      fetch(`https://openlibrary.org${found.key}.json`)
+        .then((res) => res.json())
+        .then((data) => {
           if (data.description) {
             setDescription(
               typeof data.description === "string"
@@ -27,58 +32,60 @@ export default function DetailPage() {
           }
         })
         .catch(() => setDescription("Failed to load description."));
-    }
+    } else if (found.id) {
+      fetch(`https://api.openbrewerydb.org/v1/breweries/${found.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const parts = [];
 
-    else if (parsed.id) {
-      fetch(`https://api.openbrewerydb.org/v1/breweries/${parsed.id}`)
-        .then(res => res.json())
-        .then(data => {
-          setDescription(
-            `${data.name} is a ${data.brewery_type} brewery located in ${data.city}, ${data.state_province}.`
-          );
+          if (data.name) parts.push(`Name: ${data.name}`);
+          if (data.brewery_type) parts.push(`Type: ${data.brewery_type}`);
+          if (data.address_1) parts.push(`Address: ${data.address_1}`);
+          if (data.city) parts.push(`City: ${data.city}`);
+          if (data.state_province) parts.push(`State: ${data.state_province}`);
+          if (data.postal_code) parts.push(`ZIP: ${data.postal_code}`);
+          if (data.country) parts.push(`Country: ${data.country}`);
+          if (data.phone) parts.push(`Phone: ${data.phone}`);
+          if (data.website_url) parts.push(`Website: ${data.website_url}`);
+
+          setDescription(parts.length ? parts.join("\n") : "No additional brewery details available.");
         })
         .catch(() => setDescription("No description available."));
     }
+  }, [id]);
 
-  }, []);
+  if (!item) return <p style={{ marginLeft: "200px" }}>Loading...</p>;
 
-  if (!item) return <p>No data available.</p>;
-
-  const cleanText = (text) =>
-    text?.length > 400 ? text.slice(0, 400) + "..." : text;
-  const goBackToDashboard = () => {
-    const lastTheme = localStorage.getItem("lastTheme");
-    navigate("/", { state: { theme: lastTheme } });
+  const goBack = () => {
+    navigate("/");
   };
+
+  const formatKey = (key) => {
+    return key
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+
   return (
-    <div style={{
-      padding: "20px",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center"
-    }}>
-      <button onClick={goBackToDashboard}>⬅ Back</button>
+    <div style={{ padding: "20px" }}>
+      <button onClick={goBack}>⬅ Back</button>
+
       <h1>{item.name}</h1>
-      <p style={{ maxWidth: "700px", margin: "20px auto" }}>
-        <strong>Description:</strong> {cleanText(description)}
+
+      <p style={{ maxWidth: "700px" }}>
+        <strong>Description:</strong> {description}
       </p>
 
       <table className="detail-table">
         <tbody>
           {Object.entries(item)
             .filter(([k]) => k !== "description" && k !== "key")
-            .map(([k, v]) => {
-              const formattedKey = k
-                .replace(/_/g, " ")
-                .replace(/\b\w/g, c => c.toUpperCase());
-
-              return (
-                <tr key={k}>
-                  <th>{formattedKey}</th>
-                  <td>{v || "N/A"}</td>
-                </tr>
-              );
-            })}
+            .map(([k, v]) => (
+              <tr key={k}>
+                <th>{formatKey(k)}</th>
+                <td>{v || "N/A"}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

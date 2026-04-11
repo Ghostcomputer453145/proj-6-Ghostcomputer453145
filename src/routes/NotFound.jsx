@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 export default function NotFound() {
   const navigate = useNavigate();
   const goBackToDashboard = () => {
-    const lastTheme = localStorage.getItem("lastTheme");
-    navigate("/", { state: { theme: lastTheme } });
+    navigate("/");
   };
 
   return (

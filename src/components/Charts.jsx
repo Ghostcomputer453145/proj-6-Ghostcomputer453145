@@ -85,7 +85,7 @@ export default function Charts({ data, theme }) {
               tick={{ fill: "gold", fontSize: 14 }}
             >
               <Label
-                value="Books (Sample Order)"
+                value="Books"
                 position="bottom"
                 offset={25}
               />
@@ -101,6 +101,13 @@ export default function Charts({ data, theme }) {
             </YAxis>
 
             <Tooltip
+              formatter={(value, name) => {
+                if (isBooks) return [value, "Year Published"];
+                return [value, "Value"];
+              }}
+              labelFormatter={(label) =>
+                isBooks ? `Book #${label}` : `Item`
+              }
               contentStyle={{
                 backgroundColor: "#111",
                 border: "2px solid gold",
@@ -136,14 +143,18 @@ export default function Charts({ data, theme }) {
                 ))}
               </Pie>
 
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#111",
-                border: "2px solid gold",
-                textShadow: "none",
-                color: "gold"
-              }}
-            />
+              <Tooltip
+                formatter={(value, name) => {
+                  return [value, isBooks ? "Books" : "Breweries"];
+                }}
+                labelFormatter={(label) => `${label}`}
+                contentStyle={{
+                  backgroundColor: "#111",
+                  border: "2px solid gold",
+                  textShadow: "none",
+                  color: "gold"
+                }}
+              />
 
             <Legend
               wrapperStyle={{
@@ -191,6 +202,13 @@ export default function Charts({ data, theme }) {
           </YAxis>
 
           <Tooltip
+            formatter={(value) => {
+              return [
+                value,
+                isBooks ? "Number of Books" : "Number of Breweries"
+              ];
+            }}
+            labelFormatter={(label) => label}
             cursor={{ fill: "transparent" }}
             contentStyle={{
               backgroundColor: "#111",
