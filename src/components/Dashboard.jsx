@@ -86,108 +86,118 @@ export default function Dashboard({ selectedTheme }) {
   return (
     <div className="dashboard">
 
-      {selectedTheme && (
-        <div className="controls">
-          <input
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      {!selectedTheme ? (
+        <div style={{
+          textAlign: "center",
+          marginTop: "80px",
+          fontSize: "20px"
+        }}>
+          Select a theme to begin.
+        </div>
+      ) : (
+        <>
+          <div className="controls">
+            <input
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-            <option value="all">All</option>
-            {filterOptions.map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
+            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+              <option value="all">All</option>
+              {filterOptions.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+
+            {selectedTheme === "booksTheme" && stats.minYear && stats.maxYear && (
+              <div className="slider-container">
+                <label>
+                  Year: {yearRange[0]} - {yearRange[1]}
+                </label>
+
+                <input
+                  type="range"
+                  min={stats.minYear}
+                  max={stats.maxYear}
+                  value={yearRange[0]}
+                  onChange={(e) =>
+                    setYearRange([+e.target.value, yearRange[1]])
+                  }
+                />
+
+                <input
+                  type="range"
+                  min={stats.minYear}
+                  max={stats.maxYear}
+                  value={yearRange[1]}
+                  onChange={(e) =>
+                    setYearRange([yearRange[0], +e.target.value])
+                  }
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="stats">
+            {Object.entries(stats).map(([k, v]) => (
+              <div className="stat-card" key={k}>
+                <h2>{v}</h2>
+                <p>{formatStatLabel(k)}</p>
+              </div>
             ))}
-          </select>
+          </div>
 
-          {selectedTheme === "booksTheme" && stats.minYear && stats.maxYear && (
-            <div className="slider-container">
-              <label>
-                Year: {yearRange[0]} - {yearRange[1]}
-              </label>
+          <div style={{
+            display: "flex",
+            gap: "20px",
+            flexWrap: "wrap"
+          }}>
 
-              <input
-                type="range"
-                min={stats.minYear}
-                max={stats.maxYear}
-                value={yearRange[0]}
-                onChange={(e) =>
-                  setYearRange([+e.target.value, yearRange[1]])
-                }
-              />
+            <div style={{ flex: "1 1 600px", minWidth: "0" }}>
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>
+                        {selectedTheme === "booksTheme"
+                          ? "Author"
+                          : "City / State"}
+                      </th>
+                      <th>
+                        {selectedTheme === "booksTheme"
+                          ? "Year"
+                          : "Type"}
+                      </th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
 
-              <input
-                type="range"
-                min={stats.minYear}
-                max={stats.maxYear}
-                value={yearRange[1]}
-                onChange={(e) =>
-                  setYearRange([yearRange[0], +e.target.value])
-                }
-              />
+                  <tbody>
+                    {filteredData.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.author || `${item.city}, ${item.state}`}</td>
+                        <td>{item.year || item.type}</td>
+                        <td>
+                          <button onClick={() => goToDetail(item)}>🔗</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+
+                </table>
+              </div>
             </div>
-          )}
-        </div>
+
+            <div style={{ flex: "1 1 500px" }}>
+              <Charts data={filteredData} theme={selectedTheme} />
+            </div>
+
+          </div>
+        </>
       )}
-
-      <div className="stats">
-        {Object.entries(stats).map(([k, v]) => (
-          <div className="stat-card" key={k}>
-            <h2>{v}</h2>
-            <p>{formatStatLabel(k)}</p>
-          </div>
-        ))}
-      </div>
-
-      <div style={{
-        display: "flex",
-        gap: "20px",
-        flexWrap: "wrap"
-      }}>
-
-        <div style={{ flex: "1 1 1100px", minWidth: "0" }}>
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>
-                    {selectedTheme === "booksTheme"
-                      ? "Author"
-                      : "City / State"}
-                  </th>
-                  <th>
-                    {selectedTheme === "booksTheme"
-                      ? "Year"
-                      : "Type"}
-                  </th>
-                  <th>Details</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredData.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.name}</td>
-                    <td>{item.author || `${item.city}, ${item.state}`}</td>
-                    <td>{item.year || item.type}</td>
-                    <td>
-                      <button onClick={() => goToDetail(item)}>🔗</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-
-            </table>
-          </div>
-        </div>
-
-        <div style={{ flex: "1 1 800px" }}>
-          <Charts data={filteredData} theme={selectedTheme} />
-        </div>
-
-      </div>
     </div>
   );
 }

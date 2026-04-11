@@ -7,14 +7,19 @@ import SideNav from "./components/SideNav";
 import "./App.css";
 
 export default function App() {
-  const [selectedTheme, setSelectedTheme] = useState("");
   const location = useLocation();
 
+  const [selectedTheme, setSelectedTheme] = useState("");
+
   useEffect(() => {
-    if (location.state?.theme) {
-      setSelectedTheme(location.state.theme);
+    const themeFromNav = location.state?.theme;
+
+    if (themeFromNav) {
+      setSelectedTheme(themeFromNav);
+    } else {
+      setSelectedTheme("");
     }
-  }, [location.state]);
+  }, [location.pathname, location.state]);
 
   useEffect(() => {
     if (selectedTheme) {
